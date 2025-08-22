@@ -5,3 +5,12 @@ CREATE TABLE filmes (
     genero VARCHAR(100) NOT NULL,
     ano INT NOT NULL
 ); 
+
+CREATE TABLE usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR (100) NOT NULL,
+    senha VARCHAR (100) NOT NULL
+    data_nascimento DATE NOT NULL
+);
+

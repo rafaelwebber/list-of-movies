@@ -1,5 +1,6 @@
 import mysql.connector
- 
+import bcrypt
+
 conn = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -9,21 +10,80 @@ conn = mysql.connector.connect(
 
 cursor = conn.cursor()
 
+class RespostaPadrao:
+    def __init__(self, status_http: int, mensagem: str, dados=None, id_erro=None):
+        self.status_http = status_http  
+        self.mensagem = mensagem
+        self.dados = dados
+        self.id_erro = id_erro
+
+    def to_dict(self):
+        resposta = {
+            "status_http": self.status_http,
+            "mensagem": self.mensagem
+        }
+        if self.dados is not None:
+            resposta["dados"] = self.dados
+        if self.id_erro is not None:
+            resposta["id_erro"] = self.id_erro
+        return resposta
+    #"CAMPOS_OBRIGATORIOS": "USR001",
+    #"EMAIL_DUPLICADO": "USR002",
+    #"ERRO_DESCONHECIDO": "USR999"
+    #DB001 : Falha ao conectar com o banco de dados
+    #"USUARIO_NAO_ENCONTRADO": "AUTH001",
+    #"SENHA_INCORRETA": "AUTH002",
+    #"ERRO_LOGIN": "AUTH999"
+
 def add_filme(titulo, genero, ano):
-    sql = 'INSERT INTO filmes (titulo, genero, ano) VALUES (%s, %s, %s)'
-    valores = (titulo, genero, ano)
-    cursor.execute(sql, valores)
-    conn.commit()
-    print(f'🎬 Filme "{titulo}" adicionado!')
+    if not titulo or not genero or not ano:
+        return RespostaPadrao(400, "Todos os campos são obrigatorios.").to_dict()
+    
+    try:
+        sql = 'INSERT INTO filmes (titulo, genero, ano) VALUES (%s, %s, %s)'
+        valores = (titulo, genero, ano)
+        cursor.execute(sql, valores)
+        conn.commit()
+        return RespostaPadrao(201, f"Filme {titulo} cadastrado com sucesso.").to_dict()
+    except ValueError:
+        return RespostaPadrao(400, "Ano deve ser um número inteiro.").to_dict()
+    except Exception as e:
+        return RespostaPadrao(500, "Erro interno ao cadastrar filme.", id_erro="DB001").to_dict()
 
 def listar_filmes():
-    cursor.execute('SELECT * FROM filmes')
-    resultados = cursor.fetchall()
-    for filme in resultados:
-        print(f'{filme[0]} - {filme[1]} ({filme[2]}, {filme[3]})')
+    try:
+        cursor.execute('SELECT * FROM filmes')
+        resultados = cursor.fetchall()
+        filmes = []
+        for filme in resultados:
+            filmes.append({
+                "id": filme[0],
+                "titulo": filme[1],
+                "genero": filme[2],
+                "ano": filme[3]
+            })
+        return RespostaPadrao(200,'Lista de filmes.', dados=filmes ).to_dict()
+    except Exception as e:
+        return RespostaPadrao(500, "Erro ao listar filmes.", id_erro="DB002").to_dict()
 
 
-add_filme("Matrix", "Ficção Científica", 1999)
-listar_filmes()
+def add_usuario(nome, email, senha, data_nascimento):
+    if not nome or not email or not senha or not data_nascimento:
+        return RespostaPadrao(400, "Todos os campos são obrigatorios.", id_erro="USR001").to_dict()
 
+    email=email.strip().lower()
+    cursor.execute("SELECT id FROM usuario WHERE email = %s", (email,))
+    if cursor.fetchone():
+        return RespostaPadrao(409, "E-mail já cadastrado.", id_erro="USR002").to_dict()
+
+    senha_hash = bcrypt.hashpw(senha.encode(), bcrypt.gensalt())
+    sql = 'INSERT INTO usuario (nome, email, senha, data_nascimento) VALUES(%s, %s, %s, %s)'
+    valores = (nome, email, senha_hash, data_nascimento)
+    cursor.execute(sql, valores)
+    conn.commit()
+    return RespostaPadrao(201, f"Usuário {nome} cadastrado com sucesso!").to_dict()
+
+
+def fazer_login(email, senha, cursor):
+ 
 conn.close()
