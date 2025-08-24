@@ -4,10 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 conn = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="123456",
-    database="catalago"
     host=os.getenv("DB_HOST"),
     user=os.getenv("DB_USER"),
     password=os.getenv("DB_PASSWORD"),
