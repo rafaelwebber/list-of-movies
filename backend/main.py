@@ -1,6 +1,11 @@
 import mysql.connector
 import bcrypt
 from dotenv import load_dotenv
+from pathlib import Path
+import os
+
+env_path = Path(__file__).parent / '.env' / '.env'
+load_dotenv(dotenv_path=env_path)
 
 load_dotenv()
 conn = mysql.connector.connect(
