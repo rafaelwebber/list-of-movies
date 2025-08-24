@@ -85,5 +85,23 @@ def add_usuario(nome, email, senha, data_nascimento):
 
 
 def fazer_login(email, senha, cursor):
- 
+    if not email or not senha:
+        return RespostaPadrao(400, "E-mail e senha são obrigatórios.", id_erro="LOGIN001").to_dict()
+
+    email = email.strip().lower()
+    cursor.execute("SELECT id, nome, senha FROM usuario WHERE email = %s", (email,))
+    usuario = cursor.fetchone()
+
+    if not usuario:
+        return RespostaPadrao(404, "Usuário não encontrado.", id_erro="LOGIN002").to_dict()
+
+    id_usuario, nome_usuario, senha_hash = usuario
+
+    if not bcrypt.checkpw(senha.encode(), senha_hash.encode() if isinstance(senha_hash, str) else senha_hash):
+        return RespostaPadrao(401, "Senha incorreta.", id_erro="LOGIN003").to_dict()
+
+    return RespostaPadrao(200, f"Login realizado com sucesso. Bem-vindo, {nome_usuario}!", id_erro=None).to_dict()
+
+print(fazer_login("rafael@email.com", "senha123", cursor))  
+
 conn.close()
