@@ -53,3 +53,32 @@ def listar_filmes():
         return RespostaPadrao(200,'Lista de filmes.', dados=filmes ).to_dict()
     except Exception as e:
         return RespostaPadrao(500, "Erro ao listar filmes.", id_erro="DB002").to_dict()
+    
+def vincular_filme_usuario(filme_id, usuario_id):
+    try:
+        cursor.execute(
+            "SELECT * FROM usuario_filme WHERE usuario_id = %s AND filme_id = %s",
+            (usuario_id, filme_id)
+        )
+        if cursor.fetchone():
+            return {
+                "status_http": 409,
+                "mensagem": "Filme já vinculado ao usuário."
+            }
+
+        cursor.execute(
+            "INSERT INTO usuario_filme (usuario_id, filme_id) VALUES (%s, %s)",
+            (usuario_id, filme_id)
+        )
+        conn.commit()
+        return {
+            "status_http": 201,
+            "mensagem": "Filme vinculado com sucesso."
+        }
+
+    except Exception as e:
+        return {
+            "status_http": 500,
+            "mensagem": "Erro ao vincular filme.",
+            "erro": str(e)
+        }

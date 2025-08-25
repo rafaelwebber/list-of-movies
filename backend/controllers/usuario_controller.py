@@ -29,3 +29,22 @@ def fazer_login(email, senha):
         return RespostaPadrao(401, "Credenciais inválidas.").to_dict()
 
     return RespostaPadrao(200, "Login realizado com sucesso.", dados={"id": usuario[0], "nome": usuario[1]}).to_dict()
+
+def listar_filmes_por_usuario(usuario_id):
+    try:
+        cursor.execute("""
+            SELECT f.id, f.titulo, f.genero, f.ano, f.imagem_url
+            FROM filmes f
+            JOIN usuario_filme uf ON f.id = uf.filme_id
+            WHERE uf.usuario_id = %s
+        """, (usuario_id,))
+        filmes = cursor.fetchall()
+
+        if not filmes:
+            return RespostaPadrao(200, "Usuário não possui filmes vinculados.", dados=[]).to_dict()
+
+        lista = [{"id": f[0], "titulo": f[1], "genero": f[2], "ano": f[3], "imagem_url": f[4]} for f in filmes]
+        return RespostaPadrao(200, "Filmes do usuário.", dados=lista).to_dict()
+    
+    except Exception as e:
+        return RespostaPadrao(500, "Erro ao listar filmes do usuário.", id_erro="FILMEUSR002").to_dict()
