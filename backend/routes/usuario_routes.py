@@ -1,0 +1,21 @@
+from flask import Blueprint, request, jsonify
+from controllers.usuario_controller import add_usuario, fazer_login
+
+usuario_bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
+
+@usuario_bp.route('/', methods=['POST'])
+def cadastrar():
+    dados = request.get_json()
+    nome = dados.get("nome")
+    email = dados.get("email")
+    senha = dados.get("senha")
+    resposta = add_usuario(nome, email, senha)
+    return jsonify(resposta), resposta["status"]
+
+@usuario_bp.route('/login', methods=['POST'])
+def login():
+    dados = request.get_json()
+    email = dados.get("email")
+    senha = dados.get("senha")
+    resposta = fazer_login(email, senha)
+    return jsonify(resposta), resposta["status"]
