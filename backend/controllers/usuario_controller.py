@@ -48,3 +48,27 @@ def listar_filmes_por_usuario(usuario_id):
     
     except Exception as e:
         return RespostaPadrao(500, "Erro ao listar filmes do usuário.", id_erro="FILMEUSR002").to_dict()
+
+def avaliar_filme_usuario(usuario_id, filme_id, nota):
+    try:
+        if nota < 1 or nota > 5:
+            return RespostaPadrao(400, "Nota inválida. Use valores de 1 a 5.").to_dict()
+
+        cursor.execute("""
+            SELECT * FROM usuario_filme
+            WHERE usuario_id = %s AND filme_id = %s
+        """, (usuario_id, filme_id))
+        if not cursor.fetchone():
+            return RespostaPadrao(404, "Filme não vinculado ao usuário.").to_dict()
+
+        cursor.execute("""
+            UPDATE usuario_filme
+            SET nota = %s
+            WHERE usuario_id = %s AND filme_id = %s
+        """, (nota, usuario_id, filme_id))
+        conn.commit()
+
+        return RespostaPadrao(200, "Avaliação registrada com sucesso.").to_dict()
+
+    except Exception as e:
+        return RespostaPadrao(500, "Erro ao avaliar filme.", id_erro="AVALFILME001").to_dict()
