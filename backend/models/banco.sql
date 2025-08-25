@@ -18,6 +18,7 @@ CREATE TABLE usuario (
 CREATE TABLE usuario_filme (
     usuario_id INT,
     filme_id INT,
+    nota INTEGER CHECK (nota BETWEEN 1 AND 5),
     PRIMARY KEY (usuario_id, filme_id),
     FOREIGN KEY (usuario_id) REFERENCES usuario(id),
     FOREIGN KEY (filme_id) REFERENCES filme(id)

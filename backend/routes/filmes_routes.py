@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from controllers.filmes_controller import add_filme, listar_filmes, vincular_filme_usuario
-from controllers.usuario_controller import listar_filmes_por_usuario
+from controllers.usuario_controller import listar_filmes_por_usuario, avaliar_filme_usuario
 
 filmes_bp = Blueprint('filmes', __name__, url_prefix='/filmes')
 
@@ -29,3 +29,12 @@ def filmes_por_usuario(usuario_id):
     resposta = listar_filmes_por_usuario(usuario_id)
     return jsonify(resposta), resposta["status"]
 
+@filmes_bp.route('/avaliar', methods=['POST'])
+def avaliar_filme():
+    dados = request.get_json()
+    usuario_id = dados.get("usuario_id")
+    filme_id = dados.get("filme_id")
+    nota = dados.get("nota")
+
+    resposta = avaliar_filme_usuario(usuario_id, filme_id, nota)
+    return jsonify(resposta), resposta["status"]
