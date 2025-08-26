@@ -8,9 +8,14 @@ def cadastrar():
     dados = request.get_json()
     nome = dados.get("nome")
     email = dados.get("email")
+<<<<<<< HEAD
     data_nascimento = dados.get("data_nascimento")
     senha = dados.get("senha")
     resposta = add_usuario(nome, email, data_nascimento, senha)
+=======
+    senha = dados.get("senha")
+    resposta = add_usuario(nome, email, senha)
+>>>>>>> 208880cba3f5f2081aecb6b34a15a4f31fe95439
     return jsonify(resposta), resposta["status"]
 
 @usuario_bp.route('/login', methods=['POST'])
