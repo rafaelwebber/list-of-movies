@@ -3,7 +3,7 @@ from controllers.usuario_controller import add_usuario, fazer_login
 
 usuario_bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 
-@usuario_bp.route('/', methods=['POST'])
+@usuario_bp.route('/cadastro', methods=['POST'])
 def cadastrar():
     dados = request.get_json()
     nome = dados.get("nome")

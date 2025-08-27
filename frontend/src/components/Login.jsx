@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { FaEnvelope, FaLock, FaUserCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -29,7 +30,39 @@ export default function Login() {
 
   return (
     <div className="container">
+      <header className="titleBox">
+        <img src="/pipoca.jpg" alt="Cinema Icons" className="titleImage" />
+
+
+
+  <h1 className="animatedTitle">
+    {'List of Movies'.split('').map((char, i) => (
+      <span
+        key={i}
+        className="letter"
+        style={{ animationDelay: `${i * 0.1}s` }}
+      >
+        {char === ' ' ? '\u00A0' : char}
+      </span>
+    ))}
+  </h1>
+
+  <p className="animatedTagline">
+    {'Seu catálogo pessoal de filmes favoritos'.split('').map((char, i) => (
+      <span
+        key={i}
+        className="letter"
+        style={{ animationDelay: `${i * 0.05}s` }}
+      >
+        {char === ' ' ? '\u00A0' : char}
+      </span>
+    ))}
+  </p>
+</header>
+
+
       <div className="loginBox">
+        <h1>Acesse sua conta</h1>
         <FaUserCircle className="profileIcon" />
         <div className="inputGroup">
           <FaEnvelope className="icon" />
@@ -56,6 +89,9 @@ export default function Login() {
           <a href="#">Forgot Password?</a>
         </div>
         <button className="loginButton" onClick={handleLogin}>LOGIN</button>
+          <div className="registerPrompt">
+            <p>Não tem uma conta? <Link to="/cadastro">Crie uma agora</Link></p>
+          </div>
       </div>
     </div>
   );
