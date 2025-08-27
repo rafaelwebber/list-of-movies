@@ -30,10 +30,12 @@ export default function Cadastro() {
   return (
     <div className="cadastroContainer">
       <h1>Crie sua conta</h1>
+      <div className="inputs">
       <input type="text" placeholder="Nome" value={nome} onChange={e => setNome(e.target.value)} />
       <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
       <input type="date" placeholder="Data de nascimento" value={dataNascimento} onChange={e => setDataNascimento(e.target.value)} />
       <input type="password" placeholder="Senha" value={senha} onChange={e => setSenha(e.target.value)} />
+      </div>
       <button onClick={handleCadastro}>Cadastrar</button>
     </div>
   );
