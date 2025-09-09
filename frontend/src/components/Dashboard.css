@@ -1,32 +1,18 @@
-.dashboardContainer {
-  padding: 30px;
-  font-family: 'Segoe UI', sans-serif;
-  color: #fff;
-  background-color: #121212;
-  min-height: 100vh;
-}
 
 .dashboardHeader {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.filmesSection {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
 }
 
-.filmeCard {
-  background-color: #1e1e1e;
-  padding: 20px;
-  border-radius: 10px;
-  width: 250px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease;
+.logo {
+  height: 50px;
 }
 
-.filmeCard:hover {
-  transform: scale(1.05);
+.avatar {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  object-fit: cover;
 }

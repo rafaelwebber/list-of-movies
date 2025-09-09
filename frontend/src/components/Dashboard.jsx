@@ -1,28 +1,20 @@
 import React from 'react';
 import './Dashboard.css';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
-  const filmes = [
-    { id: 1, titulo: 'O Poderoso Chefão', genero: 'Drama' },
-    { id: 2, titulo: 'Interestelar', genero: 'Ficção Científica' },
-    { id: 3, titulo: 'Parasita', genero: 'Suspense' },
-  ];
-
   return (
-    <div className="dashboardContainer">
-      <header className="dashboardHeader">
-        <h1>🎬 List of Movies</h1>
-        <p>Bem-vindo ao seu catálogo pessoal</p>
-      </header>
-
-      <section className="filmesSection">
-        {filmes.map(filme => (
-          <div key={filme.id} className="filmeCard">
-            <h2>{filme.titulo}</h2>
-            <p>Gênero: {filme.genero}</p>
-          </div>
-        ))}
-      </section>
+    <div className="dashboardMenu">
+      <h1>Dashboard</h1>
+      <ul>
+        <li><Link to="/dashboard/filmes">🎬 Meus Filmes</Link></li>
+        <li><Link to="/dashboard/adicionar">➕ Adicionar Filme</Link></li>
+        <li><Link to="/dashboard/perfil">👤 Meu Perfil</Link></li>
+        <li><Link to="/dashboard/estatisticas">📊 Estatísticas</Link></li>
+        <li><Link to="/dashboard/buscar">🔍 Buscar Filmes</Link></li>
+        <li><Link to="/dashboard/recomendacoes">🎯 Recomendações</Link></li>
+        <li><Link to="/dashboard/tema">🌓 Alternar Tema</Link></li>
+      </ul>
     </div>
   );
 }
