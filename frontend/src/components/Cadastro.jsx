@@ -28,6 +28,11 @@ export default function Cadastro() {
   };
 
   return (
+  <>
+    <div className="logoFixed">
+      <img src="/LOGO_RLW.png" alt="Logo RLW" className="logo" />
+    </div>
+    
     <div className="cadastroContainer">
       <h1>Crie sua conta</h1>
       <div className="inputs">
@@ -38,5 +43,6 @@ export default function Cadastro() {
       </div>
       <button onClick={handleCadastro}>Cadastrar</button>
     </div>
+  </>
   );
 }
