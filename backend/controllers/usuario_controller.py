@@ -32,7 +32,7 @@ def fazer_login(email, senha):
 def listar_filmes_por_usuario(usuario_id):
     try:
         cursor.execute("""
-            SELECT f.id, f.titulo, f.genero, f.ano, f.imagem_url
+            SELECT f.id, f.titulo, f.genero, f.ano, f.imagem_url, uf.nota
             FROM filmes f
             JOIN usuario_filme uf ON f.id = uf.filme_id
             WHERE uf.usuario_id = %s
@@ -42,7 +42,7 @@ def listar_filmes_por_usuario(usuario_id):
         if not filmes:
             return RespostaPadrao(200, "Usuário não possui filmes vinculados.", dados=[]).to_dict()
 
-        lista = [{"id": f[0], "titulo": f[1], "genero": f[2], "ano": f[3], "imagem_url": f[4]} for f in filmes]
+        lista = [{"id": f[0], "titulo": f[1], "genero": f[2], "ano": f[3], "imagem_url": f[4], "nota": f[5]} for f in filmes]
         return RespostaPadrao(200, "Filmes do usuário.", dados=lista).to_dict()
     
     except Exception as e:

@@ -21,13 +21,20 @@ const navigate = useNavigate();
 
       const data = await response.json();
       if (response.ok) {
-        localStorage.setItem('token', data.token);
+        // Gerar token simples se não existir (para compatibilidade)
+        if (!data.token) {
+          localStorage.setItem('token', 'token_temporario_' + Date.now());
+        } else {
+          localStorage.setItem('token', data.token);
+        }
+        // Salvar informações do usuário se disponíveis
+        if (data.dados) {
+          localStorage.setItem('userInfo', JSON.stringify(data.dados));
+        }
         alert('Login bem-sucedido!');
         navigate('/dashboard');
-
-        // redirecionar ou navegar
       } else {
-        alert('Erro: ' + data.message);
+        alert('Erro: ' + (data.mensagem || data.message || 'Credenciais inválidas'));
       }
     } catch (error) {
       alert('Erro de conexão com o servidor');
