@@ -7,6 +7,7 @@ import {
   FaCalendarAlt, 
   FaSave,
   FaArrowLeft,
+  FaCamera,
 } from 'react-icons/fa';
 
 export default function Perfil() {
@@ -14,7 +15,8 @@ export default function Perfil() {
     id: null,
     nome: '',
     email: '',
-    data_nascimento: ''
+    data_nascimento: '',
+    foto_perfil: null
   });
   const [loading, setLoading] = useState(true);
   const [editando, setEditando] = useState(false);
@@ -31,6 +33,9 @@ export default function Perfil() {
   });
   const [mensagem, setMensagem] = useState({ tipo: '', texto: '' });
   const [salvando, setSalvando] = useState(false);
+  const [fotoPreview, setFotoPreview] = useState(null);
+  const [salvandoFoto, setSalvandoFoto] = useState(false);
+  const fileInputRef = React.useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,6 +69,13 @@ export default function Perfil() {
             email: data.dados.email || '',
             data_nascimento: data.dados.data_nascimento || ''
           });
+          // Se houver foto, criar URL completa
+          if (data.dados.foto_perfil) {
+            const fotoUrl = data.dados.foto_perfil.startsWith('http') 
+              ? data.dados.foto_perfil 
+              : `http://localhost:5000${data.dados.foto_perfil}`;
+            setFotoPreview(fotoUrl);
+          }
         }
       } else {
         setMensagem({ tipo: 'erro', texto: 'Erro ao carregar dados do usuário.' });
@@ -204,6 +216,106 @@ export default function Perfil() {
     return idade;
   };
 
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validar tipo de arquivo
+    if (!file.type.startsWith('image/')) {
+      setMensagem({ tipo: 'erro', texto: 'Por favor, selecione uma imagem válida.' });
+      return;
+    }
+
+    // Validar tamanho (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setMensagem({ tipo: 'erro', texto: 'A imagem deve ter no máximo 5MB.' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      setFotoPreview(base64String);
+      fazerUploadFoto(base64String);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const fazerUploadFoto = async (fotoBase64) => {
+    setSalvandoFoto(true);
+    setMensagem({ tipo: '', texto: '' });
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/usuarios/${usuario.id}/foto`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          foto_base64: fotoBase64
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Atualizar URL da foto no estado
+        if (data.dados && data.dados.foto_perfil) {
+          const fotoUrl = data.dados.foto_perfil.startsWith('http')
+            ? data.dados.foto_perfil
+            : `http://localhost:5000${data.dados.foto_perfil}`;
+          setUsuario(prev => ({ ...prev, foto_perfil: fotoUrl }));
+          setFotoPreview(fotoUrl);
+        }
+        setMensagem({ tipo: 'sucesso', texto: data.mensagem || 'Foto de perfil atualizada com sucesso!' });
+      } else {
+        setMensagem({ tipo: 'erro', texto: data.mensagem || 'Erro ao atualizar foto de perfil.' });
+        setFotoPreview(null);
+      }
+    } catch (error) {
+      console.error('Erro ao fazer upload:', error);
+      setMensagem({ tipo: 'erro', texto: 'Erro de conexão com o servidor.' });
+      setFotoPreview(null);
+    } finally {
+      setSalvandoFoto(false);
+    }
+  };
+
+  const handleRemoverFoto = async () => {
+    if (!window.confirm('Deseja realmente remover sua foto de perfil?')) {
+      return;
+    }
+
+    setSalvandoFoto(true);
+    try {
+      // Enviar string vazia para remover foto
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/usuarios/${usuario.id}/foto`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          foto_base64: ''
+        })
+      });
+
+      if (response.ok) {
+        setUsuario(prev => ({ ...prev, foto_perfil: null }));
+        setFotoPreview(null);
+        setMensagem({ tipo: 'sucesso', texto: 'Foto de perfil removida com sucesso!' });
+      }
+    } catch (error) {
+      console.error('Erro ao remover foto:', error);
+      setMensagem({ tipo: 'erro', texto: 'Erro ao remover foto de perfil.' });
+    } finally {
+      setSalvandoFoto(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="perfil-container">
@@ -228,7 +340,40 @@ export default function Perfil() {
           </button>
           <div className="avatar-container">
             <div className="avatar-circle">
-              <FaUser />
+              {fotoPreview ? (
+                <img src={fotoPreview} alt="Foto de perfil" className="avatar-image" />
+              ) : (
+                <FaUser />
+              )}
+              {salvandoFoto && <div className="avatar-loading">Carregando...</div>}
+            </div>
+            <div className="avatar-actions">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFotoChange}
+                style={{ display: 'none' }}
+                disabled={salvandoFoto}
+              />
+              <button
+                className="btn-foto"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={salvandoFoto}
+                title="Alterar foto de perfil"
+              >
+                <FaCamera /> {fotoPreview ? 'Alterar Foto' : 'Adicionar Foto'}
+              </button>
+              {fotoPreview && (
+                <button
+                  className="btn-remover-foto"
+                  onClick={handleRemoverFoto}
+                  disabled={salvandoFoto}
+                  title="Remover foto de perfil"
+                >
+                  Remover
+                </button>
+              )}
             </div>
           </div>
           <h1>Meu Perfil</h1>

@@ -4,7 +4,8 @@ from controllers.usuario_controller import (
     fazer_login, 
     buscar_usuario_por_id, 
     atualizar_usuario, 
-    alterar_senha
+    alterar_senha,
+    atualizar_foto_perfil
 )
 
 usuario_bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
@@ -47,4 +48,11 @@ def alterar_senha_usuario(usuario_id):
     senha_atual = dados.get("senha_atual")
     nova_senha = dados.get("nova_senha")
     resposta = alterar_senha(usuario_id, senha_atual, nova_senha)
+    return jsonify(resposta), resposta["status"]
+
+@usuario_bp.route('/<int:usuario_id>/foto', methods=['PUT'])
+def atualizar_foto(usuario_id):
+    dados = request.get_json()
+    foto_base64 = dados.get("foto_base64")
+    resposta = atualizar_foto_perfil(usuario_id, foto_base64)
     return jsonify(resposta), resposta["status"]

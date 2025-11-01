@@ -12,7 +12,8 @@ CREATE TABLE usuario (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR (100) NOT NULL,
     senha VARCHAR (100) NOT NULL,
-    data_nascimento DATE NOT NULL
+    data_nascimento DATE NOT NULL,
+    foto_perfil VARCHAR(255) DEFAULT NULL
 );
 
 CREATE TABLE usuario_filme (
