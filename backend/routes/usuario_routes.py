@@ -1,5 +1,11 @@
 from flask import Blueprint, request, jsonify
-from controllers.usuario_controller import add_usuario, fazer_login
+from controllers.usuario_controller import (
+    add_usuario, 
+    fazer_login, 
+    buscar_usuario_por_id, 
+    atualizar_usuario, 
+    alterar_senha
+)
 
 usuario_bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 
@@ -19,4 +25,26 @@ def login():
     email = dados.get("email")
     senha = dados.get("senha")
     resposta = fazer_login(email, senha)
+    return jsonify(resposta), resposta["status"]
+
+@usuario_bp.route('/<int:usuario_id>', methods=['GET'])
+def buscar_usuario(usuario_id):
+    resposta = buscar_usuario_por_id(usuario_id)
+    return jsonify(resposta), resposta["status"]
+
+@usuario_bp.route('/<int:usuario_id>', methods=['PUT'])
+def atualizar_dados(usuario_id):
+    dados = request.get_json()
+    nome = dados.get("nome")
+    email = dados.get("email")
+    data_nascimento = dados.get("data_nascimento")
+    resposta = atualizar_usuario(usuario_id, nome, email, data_nascimento)
+    return jsonify(resposta), resposta["status"]
+
+@usuario_bp.route('/<int:usuario_id>/senha', methods=['PUT'])
+def alterar_senha_usuario(usuario_id):
+    dados = request.get_json()
+    senha_atual = dados.get("senha_atual")
+    nova_senha = dados.get("nova_senha")
+    resposta = alterar_senha(usuario_id, senha_atual, nova_senha)
     return jsonify(resposta), resposta["status"]
