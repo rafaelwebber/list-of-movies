@@ -78,7 +78,7 @@ def avaliar_filme_usuario(usuario_id, filme_id, nota):
 
 def buscar_usuario_por_id(usuario_id):
     try:
-        cursor.execute("SELECT id, nome, email, data_nascimento, foto_perfil FROM usuario WHERE id = %s", (usuario_id,))
+        cursor.execute("SELECT id, nome, email, data_nascimento, foto_perfil, tema FROM usuario WHERE id = %s", (usuario_id,))
         usuario = cursor.fetchone()
         
         if not usuario:
@@ -94,13 +94,33 @@ def buscar_usuario_por_id(usuario_id):
             "nome": usuario[1],
             "email": usuario[2],
             "data_nascimento": str(usuario[3]) if usuario[3] else None,
-            "foto_perfil": foto_url
+            "foto_perfil": foto_url,
+            "tema": usuario[5] if len(usuario) > 5 else 'claro'
         }
         
         return RespostaPadrao(200, "Dados do usuário.", dados=dados).to_dict()
     
     except Exception as e:
         return RespostaPadrao(500, "Erro ao buscar usuário.", id_erro="USR003").to_dict()
+
+
+def atualizar_tema(usuario_id, tema):
+    try:
+        if tema not in ("claro", "escuro"):
+            return RespostaPadrao(400, "Tema inválido. Use 'claro' ou 'escuro'.").to_dict()
+
+        # Verificar se usuário existe
+        cursor.execute("SELECT id FROM usuario WHERE id = %s", (usuario_id,))
+        if not cursor.fetchone():
+            return RespostaPadrao(404, "Usuário não encontrado.").to_dict()
+
+        cursor.execute("UPDATE usuario SET tema = %s WHERE id = %s", (tema, usuario_id))
+        conn.commit()
+
+        return RespostaPadrao(200, "Tema atualizado com sucesso.", dados={"tema": tema}).to_dict()
+
+    except Exception as e:
+        return RespostaPadrao(500, "Erro ao atualizar tema do usuário.", id_erro="USR_TEMA_001").to_dict()
 
 def atualizar_usuario(usuario_id, nome=None, email=None, data_nascimento=None):
     try:

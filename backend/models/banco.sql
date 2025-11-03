@@ -13,7 +13,8 @@ CREATE TABLE usuario (
     email VARCHAR (100) NOT NULL,
     senha VARCHAR (100) NOT NULL,
     data_nascimento DATE NOT NULL,
-    foto_perfil VARCHAR(255) DEFAULT NULL
+    foto_perfil VARCHAR(255) DEFAULT NULL,
+    tema VARCHAR(20) DEFAULT 'claro'
 );
 
 CREATE TABLE usuario_filme (

@@ -7,6 +7,7 @@ from controllers.usuario_controller import (
     alterar_senha,
     atualizar_foto_perfil
 )
+from controllers.usuario_controller import atualizar_tema
 
 usuario_bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 
@@ -55,4 +56,12 @@ def atualizar_foto(usuario_id):
     dados = request.get_json()
     foto_base64 = dados.get("foto_base64")
     resposta = atualizar_foto_perfil(usuario_id, foto_base64)
+    return jsonify(resposta), resposta["status"]
+
+
+@usuario_bp.route('/<int:usuario_id>/tema', methods=['PUT'])
+def atualizar_tema_usuario(usuario_id):
+    dados = request.get_json() or {}
+    tema = dados.get("tema")
+    resposta = atualizar_tema(usuario_id, tema)
     return jsonify(resposta), resposta["status"]
