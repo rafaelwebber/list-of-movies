@@ -1,0 +1,83 @@
+/* Variáveis CSS para Tema Claro */
+.tema-claro {
+  --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --bg-secondary: rgba(255, 255, 255, 0.95);
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-input: #f8f9fa;
+  --bg-input-focus: white;
+  --bg-header: rgba(255, 255, 255, 0.95);
+  
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  --text-tertiary: #495057;
+  --text-inverse: white;
+  --text-placeholder: #6c757d;
+  
+  --border-color: #e9ecef;
+  --border-focus: #e60505;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.3);
+  
+  --accent-primary: #e60505;
+  --accent-hover: #c00404;
+  --accent-light: rgba(230, 5, 5, 0.1);
+  
+  --success-bg: #d4edda;
+  --success-text: #155724;
+  --success-border: #c3e6cb;
+  
+  --error-bg: #f8d7da;
+  --error-text: #721c24;
+  --error-border: #f5c6cb;
+  
+  --overlay: rgba(0, 0, 0, 0.1);
+  --backdrop: blur(10px);
+}
+
+/* Variáveis CSS para Tema Escuro */
+.tema-escuro {
+  --bg-primary: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+  --bg-secondary: rgba(30, 41, 59, 0.95);
+  --bg-card: rgba(30, 41, 59, 0.95);
+  --bg-input: #1e293b;
+  --bg-input-focus: #334155;
+  --bg-header: rgba(30, 41, 59, 0.95);
+  
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --text-inverse: #1e293b;
+  --text-placeholder: #64748b;
+  
+  --border-color: #334155;
+  --border-focus: #e60505;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.7);
+  
+  --accent-primary: #e60505;
+  --accent-hover: #ff1744;
+  --accent-light: rgba(230, 5, 5, 0.2);
+  
+  --success-bg: rgba(16, 185, 129, 0.2);
+  --success-text: #10b981;
+  --success-border: rgba(16, 185, 129, 0.3);
+  
+  --error-bg: rgba(239, 68, 68, 0.2);
+  --error-text: #ef4444;
+  --error-border: rgba(239, 68, 68, 0.3);
+  
+  --overlay: rgba(0, 0, 0, 0.5);
+  --backdrop: blur(10px);
+}
+
+/* Aplicar transições suaves para mudanças de tema */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
