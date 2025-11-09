@@ -43,7 +43,11 @@ const navigate = useNavigate();
 
   return (
     <div className="container">
-      <div className="backgroundBlur" />
+      <div
+  className="backgroundBlur"
+  style={{ backgroundImage: "url('/pipoca.jpg')" }}
+/>
+
       
     <div className="foregroundContent">
       <header className="titleBox">
