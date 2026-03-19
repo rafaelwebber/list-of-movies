@@ -3,8 +3,18 @@ from models.resposta_padrao import RespostaPadrao
 import bcrypt
 import os
 import base64
+import random
+from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 from pathlib import Path
+
+# Mock in-memory store for email verification codes.
+# NOTE: Because it's in-memory, codes will be lost on server restart.
+_email_verificacao_mock = {}  # { email: { codigo, expira_em, validado, usuario_id } }
+
+def _gerar_codigo_verificacao():
+    # 6-digit numeric code with leading zeros.
+    return f"{random.randint(0, 999999):06d}"
 
 def add_usuario(nome, email, data_nascimento, senha):
     if not nome or not email or not senha or not data_nascimento:
@@ -18,7 +28,22 @@ def add_usuario(nome, email, data_nascimento, senha):
     cursor.execute("INSERT INTO usuario (nome, email, data_nascimento, senha) VALUES (%s, %s, %s, %s)", (nome, email, data_nascimento, senha_hash))
     conn.commit()
 
-    return RespostaPadrao(201, "Usuário cadastrado com sucesso.").to_dict()
+    usuario_id = cursor.lastrowid
+
+    # Mock: gerar código e guardar em memória para validação.
+    codigo = _gerar_codigo_verificacao()
+    _email_verificacao_mock[email] = {
+        "codigo": codigo,
+        "expira_em": datetime.utcnow() + timedelta(minutes=10),
+        "validado": False,
+        "usuario_id": usuario_id
+    }
+
+    return RespostaPadrao(
+        201,
+        "Usuário cadastrado com sucesso.",
+        dados={"id": usuario_id, "codigo": codigo}
+    ).to_dict()
 
 
 def fazer_login(email, senha):
@@ -32,6 +57,49 @@ def fazer_login(email, senha):
         return RespostaPadrao(401, "Credenciais inválidas.").to_dict()
 
     return RespostaPadrao(200, "Login realizado com sucesso.", dados={"id": usuario[0], "nome": usuario[1]}).to_dict()
+
+def verificar_email_por_codigo(email, codigo):
+    if not email or not codigo:
+        return RespostaPadrao(400, "Email e código são obrigatórios.").to_dict()
+
+    registro = _email_verificacao_mock.get(email)
+    if not registro:
+        return RespostaPadrao(400, "Código inválido ou não solicitado.").to_dict()
+
+    if registro.get("validado"):
+        # Já validado: retornar os dados do usuário.
+        return buscar_usuario_por_id(registro.get("usuario_id"))
+
+    if datetime.utcnow() > registro.get("expira_em"):
+        return RespostaPadrao(400, "Código expirado. Solicite novamente o cadastro.").to_dict()
+
+    if str(codigo).strip() != str(registro.get("codigo")).strip():
+        return RespostaPadrao(401, "Código inválido.").to_dict()
+
+    registro["validado"] = True
+    return buscar_usuario_por_id(registro.get("usuario_id"))
+
+def reenviar_codigo_verificacao_por_email(email):
+    if not email:
+        return RespostaPadrao(400, "Email é obrigatório.").to_dict()
+
+    registro = _email_verificacao_mock.get(email)
+    if not registro:
+        return RespostaPadrao(400, "Nenhuma validação pendente encontrada para este email.").to_dict()
+
+    if registro.get("validado"):
+        return RespostaPadrao(400, "Este email já foi validado.").to_dict()
+
+    codigo = _gerar_codigo_verificacao()
+    registro["codigo"] = codigo
+    registro["expira_em"] = datetime.utcnow() + timedelta(minutes=10)
+    # Mantém usuario_id e validado:false
+
+    return RespostaPadrao(
+        200,
+        "Código reenviado com sucesso.",
+        dados={"codigo": codigo}
+    ).to_dict()
 
 def listar_filmes_por_usuario(usuario_id):
     try:
@@ -51,6 +119,28 @@ def listar_filmes_por_usuario(usuario_id):
     
     except Exception as e:
         return RespostaPadrao(500, "Erro ao listar filmes do usuário.", id_erro="FILMEUSR002").to_dict()
+
+def remover_filme_usuario(usuario_id, filme_id):
+    try:
+        # Verificar se o filme está vinculado ao usuário
+        cursor.execute(
+            "SELECT * FROM usuario_filme WHERE usuario_id = %s AND filme_id = %s",
+            (usuario_id, filme_id)
+        )
+        if not cursor.fetchone():
+            return RespostaPadrao(404, "Filme não encontrado na lista do usuário.").to_dict()
+
+        # Remover o vínculo
+        cursor.execute(
+            "DELETE FROM usuario_filme WHERE usuario_id = %s AND filme_id = %s",
+            (usuario_id, filme_id)
+        )
+        conn.commit()
+
+        return RespostaPadrao(200, "Filme removido da lista com sucesso.").to_dict()
+    except Exception as e:
+        print("Erro ao remover filme:", e)
+        return RespostaPadrao(500, "Erro ao remover filme.", id_erro="USR004").to_dict()
 
 def avaliar_filme_usuario(usuario_id, filme_id, nota):
     try:

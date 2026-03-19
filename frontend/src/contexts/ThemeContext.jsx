@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 const ThemeContext = createContext();
 
@@ -34,7 +35,7 @@ export const ThemeProvider = ({ children }) => {
           const user = JSON.parse(userInfo);
           const token = localStorage.getItem('token');
           
-          fetch(`http://localhost:5000/usuarios/${user.id}`, {
+          fetch(`/usuarios/${user.id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
             .then(res => res.json())
@@ -57,7 +58,7 @@ export const ThemeProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         
         try {
-          const res = await fetch(`http://localhost:5000/usuarios/${user.id}`, {
+          const res = await fetch(`${API_URL}/usuarios/${user.id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           
@@ -123,7 +124,7 @@ export const ThemeProvider = ({ children }) => {
         const token = localStorage.getItem('token');
 
         try {
-          await fetch(`http://localhost:5000/usuarios/${user.id}/tema`, {
+          await fetch(`${API_URL}/usuarios/${user.id}/tema`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

@@ -6,6 +6,7 @@
   align-items: center;
   position: relative;
   overflow: hidden;
+  background: var(--bg-primary);
 }
 
 .backgroundBlur {
@@ -173,5 +174,326 @@ input::placeholder {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.login-mensagem {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.login-mensagem.erro {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+}
+
+/* Fundo estilo cadastro (orbs/gradientes) */
+.login-orbs {
+  position: absolute;
+  inset: -90px;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.login-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(46px);
+  opacity: 0.42;
+  animation: loginOrbFloat 6.5s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: 6%;
+  background: rgba(230, 5, 5, 0.30);
+}
+
+.orb-2 {
+  width: 360px;
+  height: 360px;
+  top: 56%;
+  right: 2%;
+  background: rgba(111, 66, 193, 0.23);
+  animation-duration: 7.6s;
+}
+
+.orb-3 {
+  width: 240px;
+  height: 240px;
+  bottom: 12%;
+  left: 14%;
+  background: rgba(40, 167, 69, 0.20);
+  animation-duration: 5.8s;
+}
+
+@keyframes loginOrbFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Layout moderno (2 colunas) */
+.login-layout {
+  width: 100%;
+  max-width: 1120px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 34px;
+  padding: 0 18px;
+}
+
+.login-panel {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.login-panel-box {
+  width: 420px;
+  max-width: 100%;
+}
+
+.login-title {
+  margin: 0 0 10px 0;
+  font-size: 1.6rem;
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+/* Bonequinhos (CSS apenas) */
+.login-characters {
+  width: 360px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+
+  --pupil-x: 7px;
+  --head-tilt: -2deg;
+  --hand-opacity: 0;
+}
+
+.login-characters.mode-email {
+  --pupil-x: 10px;
+  --head-tilt: -4deg;
+  --hand-opacity: 0.45;
+}
+
+.login-characters.mode-password {
+  --pupil-x: 13px;
+  --head-tilt: -7deg;
+  --hand-opacity: 0.85;
+}
+
+.login-characters-caption {
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-right: 6px;
+}
+
+.character {
+  position: relative;
+  width: 150px;
+  height: 220px;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.12));
+}
+
+.character-2 {
+  transform: translateX(16px) scale(0.92);
+  opacity: 0.95;
+}
+
+.char-head {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  transform: translateX(-50%) rotate(var(--head-tilt));
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.9) 0%, rgba(230, 5, 5, 0.18) 38%, rgba(255, 255, 255, 0.18) 100%);
+  transition: transform 0.25s ease;
+  border: 2px solid rgba(230, 5, 5, 0.12);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.10), inset 0 -10px 22px rgba(230, 5, 5, 0.06);
+}
+
+.login-characters.mode-password .char-head {
+  animation: headWiggle 1.8s ease-in-out infinite;
+}
+
+@keyframes headWiggle {
+  0% { transform: translateX(-50%) rotate(var(--head-tilt)) }
+  50% { transform: translateX(-50%) rotate(calc(var(--head-tilt) - 3deg)) }
+  100% { transform: translateX(-50%) rotate(var(--head-tilt)) }
+}
+
+.char-body {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 118px;
+  height: 88px;
+  border-radius: 34px;
+  background: linear-gradient(180deg, rgba(230, 5, 5, 0.28), rgba(111, 66, 193, 0.14));
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.char-eye {
+  position: absolute;
+  top: 44px;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  overflow: hidden;
+  animation: blink 6s infinite;
+}
+
+.char-eye.left {
+  left: 22px;
+}
+
+.char-eye.right {
+  right: 22px;
+}
+
+.login-characters.mode-password .char-eye {
+  animation-duration: 3s;
+}
+
+.char-pupil {
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0f172a;
+  transform: translate(0, -50%) translateX(var(--pupil-x));
+  transition: transform 0.25s ease;
+}
+
+.char-mouth {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  width: 34px;
+  height: 10px;
+  transform: translateX(-50%);
+  border-bottom: 3px solid var(--text-primary);
+  border-radius: 0 0 18px 18px;
+  opacity: 0.72;
+}
+
+.char-hand {
+  position: absolute;
+  right: -8px;
+  top: 60px;
+  width: 46px;
+  height: 30px;
+  opacity: var(--hand-opacity);
+  transform: rotate(-15deg);
+  background: rgba(230, 5, 5, 0.26);
+  border: 1px solid rgba(230, 5, 5, 0.22);
+  border-radius: 22px;
+  transition: opacity 0.25s ease;
+}
+
+.character.clicked {
+  z-index: 20;
+}
+
+/* Interação: voa e volta para a posição inicial */
+.character.character-1.clicked {
+  animation: flyAway1 1.5s ease-in-out both;
+}
+
+.character.character-2.clicked {
+  animation: flyAway2 1.5s ease-in-out both;
+}
+
+@keyframes flyAway1 {
+  0% {
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  35% {
+    transform: translateX(120px) translateY(-80px) rotate(180deg) scale(0.18, 0.72);
+    opacity: 0.05;
+  }
+  70% {
+    transform: translateX(-10px) translateY(12px) rotate(360deg) scale(1.06);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flyAway2 {
+  0% {
+    transform: translateX(16px) scale(0.92);
+    opacity: 0.95;
+  }
+  35% {
+    transform: translateX(130px) translateY(-95px) rotate(210deg) scale(0.18, 0.72);
+    opacity: 0.05;
+  }
+  70% {
+    transform: translateX(16px) translateY(8px) rotate(380deg) scale(1.04);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(16px) scale(0.92);
+    opacity: 0.95;
+  }
+}
+
+@keyframes blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  94% {
+    transform: scaleY(0.12);
+  }
+}
+
+/* Responsivo */
+@media (max-width: 920px) {
+  .login-layout {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .login-characters {
+    width: 100%;
+    min-width: auto;
+    align-items: center;
+  }
+  .login-panel {
+    justify-content: center;
+    width: 100%;
+  }
+  .login-panel-box {
+    width: 100%;
   }
 }

@@ -6,7 +6,11 @@ from pathlib import Path
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "http://127.0.0.1:3000"]}})
+
+    @app.route('/')
+    def index():
+        return {'mensagem': 'API List of Movies - Use o frontend em http://localhost:3000', 'status': 200}, 200
     
     # Registrar rota para servir arquivos de upload
     @app.route('/uploads/fotos_perfil/<filename>')

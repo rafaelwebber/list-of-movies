@@ -3,8 +3,21 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-env_path = Path(__file__).parent / '.env' / '.env'
-load_dotenv(dotenv_path=env_path)
+# Tentar carregar .env de diferentes locais
+env_paths = [
+    Path(__file__).parent.parent / '.env',  # backend/.env
+    Path(__file__).parent / '.env',  # backend/services/.env
+    Path(__file__).parent.parent.parent / '.env',  # raiz do projeto/.env
+]
+
+# Tentar carregar de cada local
+for env_path in env_paths:
+    if env_path.exists():
+        load_dotenv(dotenv_path=env_path)
+        break
+else:
+    # Se não encontrou em nenhum lugar específico, tentar carregar do diretório atual
+    load_dotenv()
 
 API_KEY = os.getenv("TMDB_API_KEY")
 BASE_URL = "https://api.themoviedb.org/3"

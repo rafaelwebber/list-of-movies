@@ -1,39 +1,40 @@
 /* Variáveis CSS para Tema Claro */
 .tema-claro {
-  --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --bg-secondary: rgba(255, 255, 255, 0.95);
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-input: #f8f9fa;
-  --bg-input-focus: white;
-  --bg-header: rgba(255, 255, 255, 0.95);
-  
-  --text-primary: #2d3748;
-  --text-secondary: #718096;
-  --text-tertiary: #495057;
-  --text-inverse: white;
-  --text-placeholder: #6c757d;
-  
-  --border-color: #e9ecef;
+  /* Paleta ajustada para um tema claro mais moderno e legível */
+  --bg-primary: linear-gradient(135deg, #fff7f8 0%, #ffecef 45%, #ffffff 100%);
+  --bg-secondary: rgba(255, 255, 255, 0.92);
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-input: #f3f4f6;
+  --bg-input-focus: #ffffff;
+  --bg-header: rgba(255, 255, 255, 0.9);
+
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --text-inverse: #ffffff;
+  --text-placeholder: #9ca3af;
+
+  --border-color: rgba(17, 24, 39, 0.12);
   --border-focus: #e60505;
-  
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.3);
-  
+
+  --shadow-sm: 0 2px 10px rgba(17, 24, 39, 0.06);
+  --shadow-md: 0 6px 18px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 10px 30px rgba(17, 24, 39, 0.12);
+  --shadow-xl: 0 20px 60px rgba(17, 24, 39, 0.18);
+
   --accent-primary: #e60505;
   --accent-hover: #c00404;
-  --accent-light: rgba(230, 5, 5, 0.1);
-  
-  --success-bg: #d4edda;
-  --success-text: #155724;
-  --success-border: #c3e6cb;
-  
-  --error-bg: #f8d7da;
-  --error-text: #721c24;
-  --error-border: #f5c6cb;
-  
-  --overlay: rgba(0, 0, 0, 0.1);
+  --accent-light: rgba(230, 5, 5, 0.12);
+
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --success-text: #0f766e;
+  --success-border: rgba(16, 185, 129, 0.22);
+
+  --error-bg: rgba(239, 68, 68, 0.12);
+  --error-text: #b91c1c;
+  --error-border: rgba(239, 68, 68, 0.22);
+
+  --overlay: rgba(230, 5, 5, 0.08);
   --backdrop: blur(10px);
 }
 

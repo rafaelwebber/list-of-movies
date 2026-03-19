@@ -11,7 +11,10 @@ import Estatisticas from './components/Estatisticas';
 import BuscarFilmes from './components/BuscarFilmes';
 import Recomendacoes from './components/Recomendacoes';
 import Tema from './components/Tema';
+import VerificarEmail from './components/VerificarEmail';
+import LoginSplash from './components/LoginSplash';
 import './styles/themes.css';
+import Footer from './components/Footer';
 
 export default function App() {
   return (
@@ -20,6 +23,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/verificar-email" element={<VerificarEmail />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/filmes" element={<MeusFilmes />} />
           <Route path="/dashboard/adicionar" element={<AdicionarFilme />} />
@@ -28,7 +32,10 @@ export default function App() {
           <Route path="/dashboard/buscar" element={<BuscarFilmes />} />
           <Route path="/dashboard/recomendacoes" element={<Recomendacoes />} />
           <Route path="/dashboard/tema" element={<Tema />} />
+          <Route path="/splash" element={<LoginSplash />} />
         </Routes>
+
+        <Footer />
       </BrowserRouter>
     </ThemeProvider>
   );

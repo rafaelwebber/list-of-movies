@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 import { 
   FaFilm, 
   FaPlusCircle, 
@@ -23,11 +24,17 @@ export default function Dashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('Usuário');
+  const [fotoPerfil, setFotoPerfil] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     carregarDados();
   }, []);
+
+  const normalizarUrlFoto = (url) => {
+    if (!url) return null;
+    return url.startsWith('http') ? url : `${API_URL}${url}`;
+  };
 
   const carregarDados = async () => {
     try {
@@ -47,9 +54,31 @@ export default function Dashboard() {
         userId = user.id;
       }
 
+      // Buscar foto/tema do usuário para renderizar o avatar no header.
+      if (userId) {
+        try {
+          const userResp = await fetch(`${API_URL}/usuarios/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+
+          if (userResp.ok) {
+            const userData = await userResp.json();
+            if (userData.dados) {
+              const dados = userData.dados;
+              setUserName(dados.nome || 'Usuário');
+              localStorage.setItem('userInfo', JSON.stringify(dados));
+              setFotoPerfil(dados.foto_perfil ? normalizarUrlFoto(dados.foto_perfil) : null);
+            }
+          }
+        } catch {
+          // Se falhar, segue sem avatar.
+          setFotoPerfil(null);
+        }
+      }
+
       // Buscar filmes do usuário se tiver ID
       if (userId) {
-        const response = await fetch(`http://localhost:5000/filmes/usuario/${userId}/filmes`, {
+        const response = await fetch(`${API_URL}/filmes/usuario/${userId}/filmes`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -68,7 +97,7 @@ export default function Dashboard() {
         }
       } else {
         // Se não tiver ID do usuário, buscar todos os filmes
-        const response = await fetch('http://localhost:5000/filmes', {
+        const response = await fetch(`${API_URL}/filmes`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -164,11 +193,29 @@ export default function Dashboard() {
       <header className="dashboard-header">
         <div className="header-content">
           <div className="header-left">
-            <h1 className="dashboard-title">
-              <FaFilm className="title-icon" />
-              List of Movies
-            </h1>
-            <p className="welcome-text">Bem-vindo, <span>{userName}</span>!</p>
+            <div className="header-user-row">
+              <div className="dashboard-avatar">
+                {fotoPerfil ? (
+                  <img
+                    src={fotoPerfil}
+                    alt="Foto de perfil"
+                    className="dashboard-avatar-image"
+                  />
+                ) : (
+                  <FaUser className="dashboard-avatar-icon" />
+                )}
+              </div>
+
+              <div className="header-user-text">
+                <h1 className="dashboard-title">
+                  <FaFilm className="title-icon" />
+                  List of Movies
+                </h1>
+                <p className="welcome-text">
+                  Bem-vindo, <span>{userName}</span>!
+                </p>
+              </div>
+            </div>
           </div>
           <div className="header-right">
             <button className="logout-btn" onClick={handleLogout} title="Sair">

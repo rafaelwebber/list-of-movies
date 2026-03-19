@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 import './Perfil.css';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -38,6 +39,12 @@ export default function Perfil() {
   const fileInputRef = React.useRef(null);
   const navigate = useNavigate();
 
+  const normalizarUrlFoto = (url) => {
+    if (!url) return null;
+    // Se for URL completa, mantém; se for caminho relativo, prefixa com a URL da API.
+    return url.startsWith('http') ? url : `${API_URL}${url}`;
+  };
+
   useEffect(() => {
     carregarDadosUsuario();
   }, []);
@@ -54,7 +61,7 @@ export default function Perfil() {
       const userId = user.id;
 
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/usuarios/${userId}`, {
+      const response = await fetch(`${API_URL}/usuarios/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -71,10 +78,7 @@ export default function Perfil() {
           });
           // Se houver foto, criar URL completa
           if (data.dados.foto_perfil) {
-            const fotoUrl = data.dados.foto_perfil.startsWith('http') 
-              ? data.dados.foto_perfil 
-              : `http://localhost:5000${data.dados.foto_perfil}`;
-            setFotoPreview(fotoUrl);
+            setFotoPreview(normalizarUrlFoto(data.dados.foto_perfil));
           }
         }
       } else {
@@ -115,7 +119,7 @@ export default function Perfil() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/usuarios/${usuario.id}`, {
+      const response = await fetch(`${API_URL}/usuarios/${usuario.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -171,7 +175,7 @@ export default function Perfil() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/usuarios/${usuario.id}/senha`, {
+      const response = await fetch(`${API_URL}/usuarios/${usuario.id}/senha`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -247,7 +251,7 @@ export default function Perfil() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/usuarios/${usuario.id}/foto`, {
+      const response = await fetch(`${API_URL}/usuarios/${usuario.id}/foto`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -263,9 +267,7 @@ export default function Perfil() {
       if (response.ok) {
         // Atualizar URL da foto no estado
         if (data.dados && data.dados.foto_perfil) {
-          const fotoUrl = data.dados.foto_perfil.startsWith('http')
-            ? data.dados.foto_perfil
-            : `http://localhost:5000${data.dados.foto_perfil}`;
+          const fotoUrl = normalizarUrlFoto(data.dados.foto_perfil);
           setUsuario(prev => ({ ...prev, foto_perfil: fotoUrl }));
           setFotoPreview(fotoUrl);
         }
@@ -292,7 +294,7 @@ export default function Perfil() {
     try {
       // Enviar string vazia para remover foto
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/usuarios/${usuario.id}/foto`, {
+      const response = await fetch(`${API_URL}/usuarios/${usuario.id}/foto`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -360,9 +362,17 @@ export default function Perfil() {
                 className="btn-foto"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={salvandoFoto}
-                title="Alterar foto de perfil"
+                title={fotoPreview ? 'Alterar foto de perfil' : 'Adicionar bonequinho'}
               >
-                <FaCamera /> {fotoPreview ? 'Alterar Foto' : 'Adicionar Foto'}
+                {fotoPreview ? (
+                  <>
+                    <FaCamera /> Alterar Foto
+                  </>
+                ) : (
+                  <>
+                    <FaUser /> Adicionar
+                  </>
+                )}
               </button>
               {fotoPreview && (
                 <button

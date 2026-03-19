@@ -5,7 +5,9 @@ from controllers.usuario_controller import (
     buscar_usuario_por_id, 
     atualizar_usuario, 
     alterar_senha,
-    atualizar_foto_perfil
+    atualizar_foto_perfil,
+    verificar_email_por_codigo,
+    reenviar_codigo_verificacao_por_email
 )
 from controllers.usuario_controller import atualizar_tema
 
@@ -27,6 +29,21 @@ def login():
     email = dados.get("email")
     senha = dados.get("senha")
     resposta = fazer_login(email, senha)
+    return jsonify(resposta), resposta["status"]
+
+@usuario_bp.route('/verificar-email', methods=['POST'])
+def verificar_email():
+    dados = request.get_json() or {}
+    email = dados.get("email")
+    codigo = dados.get("codigo")
+    resposta = verificar_email_por_codigo(email, codigo)
+    return jsonify(resposta), resposta["status"]
+
+@usuario_bp.route('/reenviar-codigo', methods=['POST'])
+def reenviar_codigo():
+    dados = request.get_json() or {}
+    email = dados.get("email")
+    resposta = reenviar_codigo_verificacao_por_email(email)
     return jsonify(resposta), resposta["status"]
 
 @usuario_bp.route('/<int:usuario_id>', methods=['GET'])
